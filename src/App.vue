@@ -4,7 +4,7 @@
     <button id="monthly-gold-plan" v-on:click="on_plan_click">Gold Plan</button>
     <button id="monthly-silver-plan" v-on:click="on_plan_click">Silver Plan</button>
     <button id="monthly-bronze-plan" v-on:click="on_plan_click">Bronze Plan</button>
-    <div class="center" v-bind:hostingData="hostingData" />
+    <h3>{{ subscriptionMessage }}</h3>
   </div>
 </template>
 
@@ -29,25 +29,28 @@ export default {
   },
   data () {
     return {
-      hostingData: null,
+      subscriptionMessage: null,
       chargebeeInstance: null,
     }
   },
   methods: {
     on_plan_click(event) {
-      const plan_id = event.target.id;
-      const url = `${AWS_API}?plan_id=${plan_id}`;
+      const planId = event.target.id;
+      let url = `${AWS_API}?plan_id=${planId}`;
       axios.defaults.withCredentials = false;
       this.chargebeeInstance.openCheckout({
         hostedPage: () => {
           return axios.get(url, { headers: { 'Content-Type': 'application/json' } }).then(response => response.data);
         },
-        success: function(hostedPageId) {
+        success: (hostedPageId) => {
           console.log(hostedPageId);
-          // Hosted page id will be unique token for the checkout that happened
-          // You can pass this hosted page id to your backend 
-          // and then call our retrieve hosted page api to get subscription details
-          // https://apidocs.chargebee.com/docs/api/hosted_pages#retrieve_a_hosted_page              
+          url = `${AWS_API}?hosted_page_id=${hostedPageId}`;
+          axios.get(url, { headers: { 'Content-Type': 'application/json' } }).then(response => {
+            // TODO: replace this with some visual on the top right of screen that indicates
+            // the subscription plan (Gold, Silver, Bronze) and time period (Monthly what date to what date)
+            console.log(response.data);
+            this.subscriptionMessage = `Congratulations! Your subscription ${response.data["subscriptionId"]} has started!`;
+          });
         }
       });
     }
