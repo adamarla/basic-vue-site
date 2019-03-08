@@ -1,38 +1,59 @@
 <template>
   <div id="app">
-    <h2>Hi {{ name }}! </h2>
-    <h2>Welcome to Your IndyFin Risk Report</h2>
-    <risk-report v-if="reportData" class="center" v-bind:reportData="reportData" />
+    <h2>Welcome to IndyFin. Pick a plan</h2>
+    <button id="monthly-gold-plan" v-on:click="on_plan_click">Gold Plan</button>
+    <button id="monthly-silver-plan" v-on:click="on_plan_click">Silver Plan</button>
+    <button id="monthly-bronze-plan" v-on:click="on_plan_click">Bronze Plan</button>
+    <div class="center" v-bind:hostingData="hostingData" />
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-
+import chargebee from './chargebee.js';
 import RiskReport from './RiskReport';
 
-const AWS_API = "https://n9zoyzpsbd.execute-api.us-east-2.amazonaws.com/default/getRiskReport"
+const AWS_API = "https://n9zoyzpsbd.execute-api.us-east-2.amazonaws.com/dev01/getRiskReport"
+const CUSTOMER_ID = "indyfin-test"
 
 export default {
   name: 'app',
   components: {
     'risk-report': RiskReport,
   },
+  mounted() {
+    const chargebeeScript = document.createElement('script');
+    chargebeeScript.setAttribute("src", "https://js.chargebee.com/v2/chargebee.js");
+    document.head.appendChild(chargebeeScript);
+    this.chargebeeInstance = Chargebee.init({
+      site: "indyfin-test"
+    });
+    console.log(this.chargebeeInstance);
+  },
   data () {
     return {
-      reportData: null,
+      hostingData: null,
+      chargebeeInstance: null,
     }
   },
-  mounted() {
-    axios.defaults.withCredentials = false;
-    axios.get(AWS_API, {
-      headers: { 'Content-Type': 'application/json' }
-    }).then(response => (this.reportData = response.data));
-  },
-  computed: {
-    name() {
-      return this.reportData ? this.reportData.item.name : '';
-    },
+  methods: {
+    on_plan_click(event) {
+      const plan_id = event.target.id;
+      const url = `${AWS_API}?plan_id=${plan_id}`;
+      axios.defaults.withCredentials = false;
+      this.chargebeeInstance.openCheckout({
+        hostedPage: () => {
+          return axios.get(url, { headers: { 'Content-Type': 'application/json' } }).then(response => response.data);
+        },
+        success: function(hostedPageId) {
+          console.log(hostedPageId);
+          // Hosted page id will be unique token for the checkout that happened
+          // You can pass this hosted page id to your backend 
+          // and then call our retrieve hosted page api to get subscription details
+          // https://apidocs.chargebee.com/docs/api/hosted_pages#retrieve_a_hosted_page              
+        }
+      });
+    }
   }
 }
 </script>

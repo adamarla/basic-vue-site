@@ -1,28 +1,13 @@
 <template>
-    <table class="report">
-        <tr>
-            <td>Total Under Investment</td>
-            <td>{{ reportData.item.scalingFactor * 100000 | currency }}</td>
-        </tr>
-        <tr>
-            <td>Horizon (years)</td>
-            <td>{{ reportData.horizon_years }}</td>
-        </tr>
-        <tr>
-            <td>Upside</td>
-            <td>{{ reportData.upside }}</td>
-        </tr>
-        <tr>
-            <td>Downside</td>
-            <td>{{ reportData.downside }}</td>
-        </tr>
-    </table>
+  <div>
+    {{ hostingData }}
+  </div>
 </template>
 
 <script>
 export default {
     name: 'RiskReport',
-    props: ['reportData'],
+    props: ['hostingData'],
 }
 </script>
 
