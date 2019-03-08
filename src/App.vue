@@ -22,9 +22,6 @@ export default {
     'risk-report': RiskReport,
   },
   mounted() {
-    const chargebeeScript = document.createElement('script');
-    chargebeeScript.setAttribute("src", "https://js.chargebee.com/v2/chargebee.js");
-    document.head.appendChild(chargebeeScript);
     this.chargebeeInstance = Chargebee.init({
       site: "indyfin-test"
     });
