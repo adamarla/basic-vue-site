@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <h2>Hi {{ name }}! </h2>
     <h2>Welcome to Your IndyFin Risk Report</h2>
     <risk-report v-if="reportData" class="center" v-bind:reportData="reportData" />
   </div>
@@ -8,10 +7,9 @@
 
 <script>
 import axios from 'axios';
-
 import RiskReport from './RiskReport';
 
-const AWS_API = "https://n9zoyzpsbd.execute-api.us-east-2.amazonaws.com/default/getRiskReport"
+const AWS_API = "https://byjojbiai8.execute-api.us-east-2.amazonaws.com/default/riskReport";
 
 export default {
   name: 'app',
@@ -29,11 +27,6 @@ export default {
       headers: { 'Content-Type': 'application/json' }
     }).then(response => (this.reportData = response.data));
   },
-  computed: {
-    name() {
-      return this.reportData ? this.reportData.item.name : '';
-    },
-  }
 }
 </script>
 

@@ -2,19 +2,19 @@
     <table class="report">
         <tr>
             <td>Total Under Investment</td>
-            <td>{{ reportData.item.scalingFactor * 100000 | currency }}</td>
+            <td>{{ reportData.plan_id }}</td>
         </tr>
         <tr>
             <td>Horizon (years)</td>
-            <td>{{ reportData.horizon_years }}</td>
+            <td>{{ reportData.plan_status }}</td>
         </tr>
         <tr>
             <td>Upside</td>
-            <td>{{ reportData.upside }}</td>
+            <td>{{ reportData.plan_start }}</td>
         </tr>
         <tr>
             <td>Downside</td>
-            <td>{{ reportData.downside }}</td>
+            <td>{{ reportData.plan_end }}</td>
         </tr>
     </table>
 </template>
